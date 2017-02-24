@@ -1,5 +1,8 @@
 package com.mielec.controllers;
 
+import com.mielec.models.User;
+import com.mielec.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +13,15 @@ import java.util.HashMap;
 @RequestMapping("/project")
 public class ProjectController {
 
+    @Autowired
+    UserRepository userRep;
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public @ResponseBody HashMap<Integer, Integer> index(@PathVariable int id) {
-        HashMap<Integer,Integer> d=new HashMap<Integer,Integer>();
-        d.put(14,id);
-        d.put(11,95);
-        return d;
+    public @ResponseBody User index(@PathVariable int id) {
+
+        return userRep.findByUsername("alex");
     }
 
 }
+
