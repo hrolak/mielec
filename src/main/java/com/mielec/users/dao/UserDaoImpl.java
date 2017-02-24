@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
             session = sessionFactory.openSession();
         }
         //"select u from User u where u.username = ?1"
-        users = session.createQuery("select enabled from user where username=?")
+        users = session.createQuery("from users where username=?")
                 .setParameter(0, username)
                 .list();
 
@@ -38,7 +38,20 @@ public class UserDaoImpl implements UserDao {
         } else {
             return null;
         }
-
+    }
+    @SuppressWarnings("unchecked")
+    public List<User> getUsers() {
+        Session session;
+        List<User> users = new ArrayList<User>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        users = session.createQuery("from users")
+                .list();
+        return users;
     }
 
 }

@@ -24,7 +24,7 @@ public class AppConfig {
     public SessionFactory sessionFactory() {
         LocalSessionFactoryBuilder builder =
                 new LocalSessionFactoryBuilder(dataSource());
-        builder.scanPackages("com.mielec.users.models")
+        builder.scanPackages("com.mielec.users.model")
                 .addProperties(getHibernateProperties());
 
         return builder.buildSessionFactory();
