@@ -16,22 +16,25 @@ public class User {
     private String username;
     private String password;
     private boolean enabled;
+    private String d_id;
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
 
     public User() {
     }
 
-    public User(String username, String password, boolean enabled) {
+    public User(String username, String password, boolean enabled,String d_id) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+        this.d_id=d_id;
     }
 
     public User(String username, String password,
-                boolean enabled, Set<UserRole> userRole) {
+                boolean enabled, String d_id, Set<UserRole> userRole) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+        this.d_id=d_id;
         this.userRole = userRole;
     }
 
@@ -44,6 +47,16 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Column(name = "d_id",
+            nullable = false, length = 3)
+    public String getD_id() {
+        return this.d_id;
+    }
+
+    public void setD_id(String d_id) {
+        this.d_id = d_id;
     }
 
     @Column(name = "password",

@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <title>Choose worker, project or add an working hours </title>
 </head>
 <body>
-<p id="hello"></p>
+<p>Wybierz projekt</p>
+<p id="project"></p>
 
 <script th:inline="javascript">
     //<![CDATA[
@@ -32,12 +32,11 @@
     //]]>
 </script>
 
-<h1 th:inline="text">Choose worker, project or add an working hours</h1>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
+<form th:action="@{/project/12}" method="post">
+    <input type="submit" value="Otwórz"/>
 </form>
-<form th:action="@{/project}" method="post">
-    <input type="submit" value="Project"/>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Wyloguj"/>
 </form>
 </body>
 </html>

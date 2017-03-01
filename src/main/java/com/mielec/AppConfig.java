@@ -25,6 +25,8 @@ public class AppConfig {
         LocalSessionFactoryBuilder builder =
                 new LocalSessionFactoryBuilder(dataSource());
         builder.scanPackages("com.mielec.users.model")
+                .scanPackages("com.mielec.project.model")
+                .scanPackages("com.mielec.job.model")
                 .addProperties(getHibernateProperties());
 
         return builder.buildSessionFactory();
@@ -43,6 +45,7 @@ public class AppConfig {
                 "org.hibernate.dialect.MySQL5Dialect");
         return prop;
     }
+
 
     @Bean(name = "dataSource")
     public DriverManagerDataSource dataSource() {

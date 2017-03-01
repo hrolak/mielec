@@ -1,5 +1,7 @@
-package com.mielec.users.dao;
+package com.mielec.project.dao;
 
+import com.mielec.project.model.Project;
+import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,47 +15,47 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class UserDaoImpl implements UserDao {
+public class ProjectDaoImpl implements  ProjectDao{
 
     @Autowired
     private SessionFactory sessionFactory;
 
     @SuppressWarnings("unchecked")
-    public User findByUserName(String username) {
+    public Project findProjectById(int id) {
         Session session;
-        List<User> users = new ArrayList<User>();
+        List<Project> projects = new ArrayList<Project>();
         try {
             session = sessionFactory.getCurrentSession();
         } catch (HibernateException e) {
             session = sessionFactory.openSession();
         }
         //"select u from User u where u.username = ?1"
-        users = session.createQuery("from users where username=?")
-                .setParameter(0, username)
+        projects = session.createQuery("from project where id=?")
+                .setParameter(0, id)
                 .list();
 
-        if (users.size() > 0) {
-            return users.get(0);
+        if (projects.size() > 0) {
+            return projects.get(0);
         } else {
             return null;
         }
     }
     @SuppressWarnings("unchecked")
-    public List<User> getUsers() {
+    public List<Project> getProjects() {
         Session session;
-        List<User> users = new ArrayList<User>();
+        List<Project> projects = new ArrayList<Project>();
         try {
             session = sessionFactory.getCurrentSession();
         } catch (HibernateException e) {
             session = sessionFactory.openSession();
         }
         //"select u from User u where u.username = ?1"
-        users = session.createQuery("from users")
+        projects = session.createQuery("from project")
                 .list();
-        return users;
+        return projects;
     }
-    /*public void addUser(String username,String password,boolean enabled) {
-        User u=new User(username,password,enabled);
+    public void addProject(int id,String name) {
+        Project p=new Project(id,name);
         Session session;
         try {
             session = sessionFactory.getCurrentSession();
@@ -61,8 +63,8 @@ public class UserDaoImpl implements UserDao {
             session = sessionFactory.openSession();
         }
         session.beginTransaction();
-        session.save(u);
+        session.save(p);
         session.getTransaction().commit();
-    }*/
+    }
 
 }

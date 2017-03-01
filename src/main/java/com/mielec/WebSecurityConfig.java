@@ -15,20 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    /*@Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/", "/home").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
-    }*/
+
 
 
     @Autowired
@@ -48,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/project/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/project/**").access("hasRole('ROLE_USER')")
                 .antMatchers("/hello").access("hasRole('ROLE_USER')")
                 .and()
                 .formLogin().loginPage("/login").failureUrl("/login?error")
