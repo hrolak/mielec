@@ -4,18 +4,21 @@
 <head>
 </head>
 <body>
-<p>Wybierz projekt:</p>
-<p id="project"></p>
+<p>Wybierz użytkownika</p>
+<p id="user"></p>
 
-<form th:action="@{/project}" method="post" id="form_id">
-    <div><select name="id" id="proj" form="form_id">
-        <option  th:each="dep : ${projects}" th:value="${dep.getId()}" th:text="${dep.getId()}"></option>
+<form th:action="@{/user}" method="post" id="form_id">
+    <div><select name="id" id="user" form="form_id">
+        <option  th:each="dep : ${users}" th:value="${dep.getUsername()}" th:text="${dep.getUsername()}"></option>
     </select></div>
     <input type="submit" value="Otwórz"/>
 </form>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Wyloguj"/>
 </form>
+
+
+
 
 </body>
 </html>

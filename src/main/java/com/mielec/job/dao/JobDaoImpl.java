@@ -9,8 +9,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 import com.mielec.job.model.Job;
 import com.mielec.project.model.Project;
 import org.springframework.stereotype.Repository;
@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Repository
 public class JobDaoImpl implements JobDao {
@@ -68,8 +69,9 @@ public class JobDaoImpl implements JobDao {
         return jobs;
     }
 
-    public void addJob(String user_id,int project_id,int time) {
-        Job j=new Job(user_id,project_id,time);
+
+    public void addJob(String user_id,int project_id,int time,Date date) {
+        Job j=new Job(user_id,project_id,time,date);
         Session session;
         try {
             session = sessionFactory.getCurrentSession();
@@ -80,7 +82,20 @@ public class JobDaoImpl implements JobDao {
         session.save(j);
         session.getTransaction().commit();
     }
-
+    @SuppressWarnings("unchecked")
+    public void eraseJob(int job_id) {
+        Session session ;
+        Job j;
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        j = (Job)session.load(Job.class,job_id);
+        session.beginTransaction();
+        session.delete(j);
+        session.getTransaction().commit();
+    }
     @SuppressWarnings("unchecked")
     public List<Job> findJobByProject(int project_id) {
         Session session;
@@ -102,6 +117,7 @@ public class JobDaoImpl implements JobDao {
         }
     }
 
+
     @SuppressWarnings("unchecked")
     public List<Job> findJobByUser(String user_id) {
         Session session;
@@ -122,4 +138,6 @@ public class JobDaoImpl implements JobDao {
             return null;
         }
     }
+
+
 }

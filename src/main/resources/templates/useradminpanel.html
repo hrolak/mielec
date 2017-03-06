@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+
+<p id="userpanel"></p>
+<script type="text/javascript">
+    //<![CDATA[
+    function empty() {
+        var x,y,z;
+
+        x = document.getElementById("num_id").value;
+        y = document.getElementById("tim_id").value;
+        z = document.getElementById("dat_id").value;
+        if (x=="" || y=="" || z=="") {
+            alert("Uzupełnij wszystkie pola");
+            return false;
+        };
+
+    }
+    function empty3() {
+        var x;
+        x = document.getElementById("s_id").value;
+        if (x=="") {
+            alert("Uzupełnij wszystkie pola");
+            return false;
+        };
+
+    }
+    function empty2() {
+        var x;
+        x = document.getElementById("rec_id").value;
+        if (x=="") {
+            alert("Uzupełnij wszystkie pola");
+            return false;
+        };
+        //]]>
+    }
+</script>
+<div th:if="${user!=null}">
+    <table>
+        <tr>
+            <th>UŻYTKOWNIK</th>
+            <th>STAWKA</th>
+            <th>GODZINY W BIEŻĄCYM MIESIĄCU</th>
+            <th>GODZINY W POPRZEDNIM MIESIĄCU</th>
+        </tr>
+        <tr>
+            <td th:text="${user.getUsername()}">Onions</td>
+            <td th:text="${user.getSalary()}">2.41</td>
+            <td th:text="${curr}">yes</td>
+            <td th:text="${last}"></td>
+        </tr>
+    </table>
+</div>
+<form th:action="@{/addadminjob}" method="post">
+    <input name="user" type="hidden" th:value="${user_id}" />
+    <label> Data: <input type="date" name="date" id="dat_id"/> </label>
+    <label> Numer projektu: <input type="number" name="project" id="num_id"/> </label>
+    <label> Czas trwania: <input type="number" name="time" id="tim_id"/> </label>
+    <input type="submit" value="Dodaj" onclick="return empty()"/>
+</form>
+<form th:action="@{/deleteadminjob}" method="post">
+    <input name="user" type="hidden" th:value="${user_id}" />
+    <label> ID rekordu: <input type="number" name="id" id="r_id"/> </label>
+    <input type="submit" value="Usuń" onclick="return empty2()"/>
+</form>
+<form th:action="@{/changesalary}" method="post">
+    <input name="user" type="hidden" th:value="${user_id}" />
+    <label> Stawka: <input type="number" name="salary" id="s_id"/> </label>
+    <input type="submit" value="Zmień stawke" onclick="return empty3()"/>
+</form>
+<div th:if="${vProj==false}">
+    <font color="red"> Nie znaleziono projektu.</font>
+</div>
+<div th:if="${vTime==false}">
+    <font color="red">Nieprawidłowy czas.</font>
+</div>
+<form th:action="@{/showadminrecords}" method="post">
+    <input name="user" type="hidden" th:value="${user_id}" />
+    <input type="submit" value="Pokaż rekordy"/>
+</form>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Wyloguj"/>
+</form>
+<div th:if="${jobs!=null}">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>PROJEKT</th>
+            <th>CZAS</th>
+            <th>DATA</th>
+        </tr>
+        <tr th:each="job : ${jobs}">
+            <td th:text="${job.getId()}">Onions</td>
+            <td th:text="${job.getProject_id()}">2.41</td>
+            <td th:text="${job.getTime()}">yes</td>
+            <td th:text="${job.getDate()}"></td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+</body>
+</html>

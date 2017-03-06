@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Wyloguj"/>
+</form>
+
+<div th:if="${total!=null}">
+    <table style="float: left">
+        <tr>
+            <th>WSZYSTKIE</th>
+            <th>KOSZT</th>
+        </tr>
+        <th:block>
+            <tr>
+                <td th:text="${total}">Onions</td>
+                <td th:text="${totalp}">Onions</td>
+            </tr>
+        </th:block>
+    </table>
+</div>
+<div th:if="${deps!=null}">
+    <table style="float: left">
+        <tr>
+            <th>DZIAł</th>
+            <th>SUMA GODZIN</th>
+            <th>KOSZT</th>
+        </tr>
+        <th:block th:each="dep : ${deps}">
+        <tr>
+            <td th:text="${dep.key}">Onions</td>
+            <td th:text="${dep.value.key}">2.41</td>
+            <td th:text="${dep.value.value}">2.41</td>
+        </tr>
+        </th:block>
+    </table>
+</div>
+<div th:if="${deps2!=null}" th:remove="tag">
+    <table style="float: right">
+        <tr>
+            <th>PRACOWNIK</th>
+            <th>SUMA GODZIN</th>
+            <th>KOSZT</th>
+        </tr>
+        <th:block th:each="dep2 : ${deps2}">
+            <tr>
+                <td th:text="${dep2.key}">Onions</td>
+                <td th:text="${dep2.value.key}">2.41</td>
+                <td th:text="${dep2.value.value}">2.41</td>
+            </tr>
+        </th:block>
+    </table>
+</div>
+</body>
+</html>

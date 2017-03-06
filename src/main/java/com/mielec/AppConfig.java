@@ -27,6 +27,7 @@ public class AppConfig {
         builder.scanPackages("com.mielec.users.model")
                 .scanPackages("com.mielec.project.model")
                 .scanPackages("com.mielec.job.model")
+                .scanPackages("com.mielec.department.model")
                 .addProperties(getHibernateProperties());
 
         return builder.buildSessionFactory();

@@ -1,8 +1,20 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+      xmlns:sec="http://www.springframework.org/security/tags">
+
 <head>
     <title>Choose worker, project or add an working hours </title>
+    <style>
+        .input {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            background-color: red;
+        }
+        .buttons button {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 <p id="hello"></p>
@@ -32,12 +44,29 @@
     //]]>
 </script>
 
-<h1 th:inline="text">Choose worker, project or add an working hours</h1>
+<form th:action="@{/userpanel}" method="get">
+    <input type="submit" value="Panel użytkownika"/>
+</form>
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+<form th:action="@{/user}" method="get">
+    <input type="submit" value="Analizuj użytkownika"/>
+</form>
+<form th:action="@{/project}" method="get">
+    <input type="submit" value="Analizuj projekt"/>
+</form>
+<form th:action="@{/adduser}" method="get">
+    <input type="submit" value="Dodaj użytkownika"/>
+</form>
+<form th:action="@{/addproject}" method="get">
+    <input type="submit" value="Dodaj projekt"/>
+</form>
+<form th:action="@{/adddepartment}" method="get">
+    <input type="submit" value="Dodaj dział"/>
+</form>
+</div>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
+    <input type="submit" value="Wyloguj"/>
 </form>
-<form th:action="@{/project}" method="post">
-    <input type="submit" value="Project"/>
-</form>
+
 </body>
 </html>

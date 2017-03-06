@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+</head>
+<body>
+<p id="adddepartment"></p>
+
+<script th:inline="javascript">
+    //<![CDATA[
+    function empty() {
+        var x, y, z;
+
+        x = document.getElementById("d_id").value;
+        y = document.getElementById("name").value;
+        if (x == "" || y == "") {
+            alert("Uzupełnij wszystkie pola");
+            return false;
+        };
+    }
+    //]]>
+</script>
+<p>Dodaj dział:</p>
+<form th:action="@{/adddepartment_added}" method="post">
+    <div><label> Symbol działu: <input type="text" maxlength="3" name="d_id" id="d_id"/> </label></div>
+    <div><label> Nazwa działu: <input type="text" name="name" id="name"/> </label></div>
+    <div><input type="submit" value="Dodaj" onclick="return empty()"/></div>
+</form>
+<div th:if="${added==false}">
+    <font color="red">Dział dodany.</font>
+</div>
+<div th:if="${added}">
+    <font color="red">Dział o podanym symbolu już istnieje.</font>
+</div>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Wyloguj"/>
+</form>
+<div th:if="${deps!=null}">
+    <table style="float: left">
+        <tr>
+            <th>SYMBOL</th>
+            <th>NAZWA</th>
+        </tr>
+        <th:block th:each="dep : ${deps}">
+            <tr>
+                <td th:text="${dep.getId()}">Onions</td>
+                <td th:text="${dep.getName()}">2.41</td>
+            </tr>
+        </th:block>
+    </table>
+</div>
+</body>
+</html>

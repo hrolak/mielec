@@ -41,6 +41,26 @@ public class ProjectDaoImpl implements  ProjectDao{
         }
     }
     @SuppressWarnings("unchecked")
+    public boolean isProject(int id) {
+        Session session;
+        List<Project> projects = new ArrayList<Project>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        projects = session.createQuery("from project where id=?")
+                .setParameter(0, id)
+                .list();
+
+        if (projects.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    @SuppressWarnings("unchecked")
     public List<Project> getProjects() {
         Session session;
         List<Project> projects = new ArrayList<Project>();

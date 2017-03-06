@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+</head>
+<body>
+<p id="adduser"></p>
+
+<script th:inline="javascript">
+    //<![CDATA[
+    daySelect = document.getElementById('deps');
+    daySelect.options[daySelect.options.length] = new Option('Text 1', 'Value1');
+
+    function empty() {
+        var x, y, z, p,q;
+
+        x = document.getElementById("username").value;
+        y = document.getElementById("password").value;
+        p = document.getElementById("salary").value;
+        if (x == "" || y == "" || p=="") {
+            alert("Uzupełnij wszystkie pola");
+            return false;
+        };
+    }
+    //]]>
+</script>
+<p>Dodaj użytkownika:</p>
+
+<form th:action="@{/adduser_added}" method="post" id="form">
+    <div><label> Nazwa użytkownika: <input type="text" name="username" id="username"/> </label></div>
+    <div><label> Hasło: <input type="text" name="password" id="password"/> </label></div>
+    <div> Dział: <select name="department" id="deps" form="form">
+        <option  th:each="dep : ${deps}" th:value="${dep.getId()}" th:text="${dep.getName()}"></option>
+    </select></div>
+    <div> Uprawnienia:<select name="priv" form="form">
+        <option value="admin">Administrator</option>
+        <option value="user">Użytkownik</option>
+    </select></div>
+    <div><label> Stawka: <input type="number" step="0.1" name="salary" id="salary"/> </label></div>
+    <div><input type="submit" value="Dodaj" onclick="return empty()"/></div>
+</form>
+
+
+<div th:if="${added==false}">
+    <font color="red">Użytkownik już istnieje.</font>
+</div>
+
+<div th:if="${added}">
+    <font color="red">Użytkownik dodany.</font>
+</div>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Wyloguj"/>
+</form>
+
+</body>
+</html>

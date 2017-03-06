@@ -3,6 +3,7 @@ package com.mielec.job.model;
 
 import com.mielec.users.model.UserRole;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -20,16 +21,16 @@ public class Job {
     private String user_id;
     private int project_id;
     private int time;
-
+    private Date date;
 
     public Job() {
     }
 
-    public Job(String user_id,int project_id,int time) {
-        this.id=id;
+    public Job(String user_id,int project_id,int time,Date date) {
         this.user_id=user_id;
         this.project_id=project_id;
         this.time=time;
+        this.date=date;
     }
 
     @Id
@@ -71,6 +72,16 @@ public class Job {
 
     public void setTime(int time) {
         this.time=time;
+    }
+
+    @Column(name = "date",
+            nullable = false, length = 30)
+    public Date getDate() {
+        return this.date;
+    }
+
+    public void setDate(Date date) {
+        this.date=date;
     }
 
 }

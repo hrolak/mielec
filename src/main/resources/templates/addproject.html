@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+</head>
+<body>
+<p id="addproject"></p>
+
+<script th:inline="javascript">
+    //<![CDATA[
+    function empty() {
+        var x, y;
+
+        x = document.getElementById("proj_id").value;
+        y = document.getElementById("name_id").value;
+        if (x == "" || y == "") {
+            alert("Uzupełnij wszystkie pola");
+            return false;
+        }
+        ;
+    }
+//]]>
+</script>
+<p>Dodaj projekt:</p>
+<form th:action="@{/addproject_added}" method="post">
+    <div><label> Numer projektu: <input type="number" name="project_id" id="proj_id"/> </label></div>
+    <div><label> Nazwa: <input type="text" name="name" id="name_id"/> </label></div>
+    <div><input type="submit" value="Dodaj" onclick="return empty()"/></div>
+</form>
+<div th:if="${added==false}">
+    <font color="red">Projekt dodany.</font>
+</div>
+<div th:if="${added}">
+    <font color="red">Projekt o podanym numerze już istnieje.</font>
+</div>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Wyloguj"/>
+</form>
+
+</body>
+</html>

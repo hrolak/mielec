@@ -31,6 +31,7 @@ public class UserRole{
         this.role = role;
     }
 
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_role_id",
