@@ -18,6 +18,9 @@
         tr:nth-child(even) {
             background-color: #dddddd;
         }
+        input {
+            width: 200px;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +101,9 @@
 <form th:action="@{/showadminrecords}" method="post">
     <input name="user" type="hidden" th:value="${user_id}" />
     <input type="submit" value="Pokaż rekordy"/>
+</form>
+<form th:action="@{/}" method="get">
+    <input type="submit" value="Menu" />
 </form>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Wyloguj"/>

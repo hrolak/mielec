@@ -22,9 +22,18 @@
 </script>
 <p>Dodaj dział:</p>
 <form th:action="@{/adddepartment_added}" method="post">
-    <div><label> Symbol działu: <input type="text" maxlength="3" name="d_id" id="d_id"/> </label></div>
-    <div><label> Nazwa działu: <input type="text" name="name" id="name"/> </label></div>
-    <div><input type="submit" value="Dodaj" onclick="return empty()"/></div>
+    <table>
+        <tr>
+            <td align="right">Symbol działu: </td>
+            <td align="left"><input type="text" maxlength="3" name="d_id" id="d_id"/></td>
+        </tr>
+        <tr>
+            <td align="right">Nazwa działu: </td>
+            <td align="left"><input type="text" name="name" id="name"/></td>
+        </tr>
+
+    </table>
+    <input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/>
 </form>
 <div th:if="${added==false}">
     <font color="red">Dział dodany.</font>
@@ -32,8 +41,11 @@
 <div th:if="${added}">
     <font color="red">Dział o podanym symbolu już istnieje.</font>
 </div>
+<form th:action="@{/}" method="get">
+    <input type="submit" value="Menu" style="height:30px; width:200px"/>
+</form>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj"/>
+    <input type="submit" value="Wyloguj" style="height:30px; width:200px"/>
 </form>
 <div th:if="${deps!=null}">
     <table style="float: left">

@@ -4,17 +4,6 @@
 
 <head>
     <title>Choose worker, project or add an working hours </title>
-    <style>
-        .input {
-            width: 100%;
-            table-layout: fixed;
-            border-collapse: collapse;
-            background-color: red;
-        }
-        .buttons button {
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
 <p id="hello"></p>
@@ -45,27 +34,27 @@
 </script>
 
 <form th:action="@{/userpanel}" method="get">
-    <input type="submit" value="Panel użytkownika"/>
+    <input type="submit" value="Panel użytkownika"  style="height:30px; width:200px"/>
 </form>
 <div sec:authorize="hasRole('ROLE_ADMIN')">
 <form th:action="@{/user}" method="get">
-    <input type="submit" value="Analizuj użytkownika"/>
+    <input type="submit" value="Analizuj użytkownika"  style="height:30px; width:200px"/>
 </form>
 <form th:action="@{/project}" method="get">
-    <input type="submit" value="Analizuj projekt"/>
+    <input type="submit" value="Analizuj projekt"  style="height:30px; width:200px"/>
 </form>
 <form th:action="@{/adduser}" method="get">
-    <input type="submit" value="Dodaj użytkownika"/>
+    <input type="submit" value="Dodaj użytkownika"  style="height:30px; width:200px"/>
 </form>
 <form th:action="@{/addproject}" method="get">
-    <input type="submit" value="Dodaj projekt"/>
+    <input type="submit" value="Dodaj projekt"  style="height:30px; width:200px"/>
 </form>
 <form th:action="@{/adddepartment}" method="get">
-    <input type="submit" value="Dodaj dział"/>
+    <input type="submit" value="Dodaj dział"  style="height:30px; width:200px"/>
 </form>
 </div>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj"/>
+    <input type="submit" value="Wyloguj"  style="height:30px; width:200px"/>
 </form>
 
 </body>

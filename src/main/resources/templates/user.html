@@ -8,13 +8,16 @@
 <p id="user"></p>
 
 <form th:action="@{/user}" method="post" id="form_id">
-    <div><select name="id" id="user" form="form_id">
+    <div><select name="id" id="user" form="form_id" style="width:200px">
         <option  th:each="dep : ${users}" th:value="${dep.getUsername()}" th:text="${dep.getUsername()}"></option>
     </select></div>
-    <input type="submit" value="Otwórz"/>
+    <input type="submit" value="Otwórz" style="height:30px; width:200px"/>
+</form>
+<form th:action="@{/}" method="get">
+    <input type="submit" value="Menu" style="height:30px; width:200px"/>
 </form>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj"/>
+    <input type="submit" value="Wyloguj" style="height:30px; width:200px"/>
 </form>
 
 

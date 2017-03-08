@@ -27,17 +27,34 @@
 <p>Dodaj użytkownika:</p>
 
 <form th:action="@{/adduser_added}" method="post" id="form">
-    <div><label> Nazwa użytkownika: <input type="text" name="username" id="username"/> </label></div>
-    <div><label> Hasło: <input type="text" name="password" id="password"/> </label></div>
-    <div> Dział: <select name="department" id="deps" form="form">
-        <option  th:each="dep : ${deps}" th:value="${dep.getId()}" th:text="${dep.getName()}"></option>
-    </select></div>
-    <div> Uprawnienia:<select name="priv" form="form">
-        <option value="admin">Administrator</option>
-        <option value="user">Użytkownik</option>
-    </select></div>
-    <div><label> Stawka: <input type="number" step="0.1" name="salary" id="salary"/> </label></div>
-    <div><input type="submit" value="Dodaj" onclick="return empty()"/></div>
+    <table>
+        <tr>
+            <td> Nazwa użytkownika:</td>
+            <td> <input type="text" name="username" id="username"/></td>
+        </tr>
+        <tr>
+            <td align="right">Hasło:  </td>
+            <td align="left"><input type="text" name="password" id="password"/></td>
+        </tr>
+        <tr>
+            <td align="right">Dział:  </td>
+            <td align="left"><select name="department" id="deps" form="form">
+                <option  th:each="dep : ${deps}" th:value="${dep.getId()}" th:text="${dep.getName()}"></option>
+            </select></td>
+        </tr>
+        <tr>
+            <td align="right">Uprawnienia:  </td>
+            <td align="left"><select name="priv" form="form">
+                <option value="admin">Administrator</option>
+                <option value="user">Użytkownik</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td align="right">Stawka:   </td>
+            <td align="left"><input type="number" step="0.1" name="salary" id="salary"/></td>
+        </tr>
+    </table>
+    <div><input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/></div>
 </form>
 
 
@@ -48,8 +65,11 @@
 <div th:if="${added}">
     <font color="red">Użytkownik dodany.</font>
 </div>
+<form th:action="@{/}" method="get">
+    <input type="submit" value="Menu" style="height:30px; width:200px"/>
+</form>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj"/>
+    <input type="submit" value="Wyloguj" style="height:30px; width:200px"/>
 </form>
 
 </body>

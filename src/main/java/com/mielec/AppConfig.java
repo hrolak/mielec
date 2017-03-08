@@ -1,6 +1,7 @@
 package com.mielec;
 
 import org.hibernate.SessionFactory;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ import java.util.Properties;
 @EnableWebMvc
 @EnableTransactionManagement
 @Configuration
+@EnableAutoConfiguration
 @ComponentScan({"com.mielec"})
 @Import({ WebSecurityConfig.class })
 public class AppConfig {

@@ -21,7 +21,9 @@
     </style>
 </head>
 <body>
-
+<form th:action="@{/}" method="get">
+    <input type="submit" value="Menu"/>
+</form>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Wyloguj"/>
 </form>
