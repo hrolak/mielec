@@ -6,7 +6,9 @@ import com.mielec.job.dao.JobDaoImpl;
 import com.mielec.job.model.Job;
 import com.mielec.project.dao.ProjectDaoImpl;
 import com.mielec.project.model.Project;
+import com.mielec.users.dao.UserDepsDaoImpl;
 import com.mielec.users.dao.UserRoleDaoImpl;
+import com.mielec.users.model.UserDeps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,6 +43,7 @@ import sun.util.calendar.LocalGregorianCalendar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class UserController {
@@ -76,6 +79,9 @@ public class UserController {
     @Autowired
     DepartmentDaoImpl DDI;
 
+    @Autowired
+    UserDepsDaoImpl UDDI;
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public @ResponseBody ModelAndView index(@RequestParam("id") String id) {
@@ -83,6 +89,7 @@ public class UserController {
         model.addObject("user_id",id);
         User u=UDI.findByUserName(id);
         List<Job> jobs=JDI.findJobByUser(id);
+        List<Department> adeps=DDI.getDepartments();
         int curr=0;
         int last=0;
         if(jobs!=null) {
@@ -96,6 +103,9 @@ public class UserController {
         model.addObject("user",u);
         model.addObject("curr",curr);
         model.addObject("last",last);
+        List<UserDeps> deps=UDI.getDeps(id);
+        model.addObject("deps",deps);
+        model.addObject("adeps",adeps);
         return model;
     }
 
@@ -110,7 +120,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value="/addjob", method = RequestMethod.POST)
-    public @ResponseBody ModelAndView addjob(@RequestParam("date") String d,@RequestParam("time") int t,@RequestParam("project") int p) {
+    public @ResponseBody ModelAndView addjob(@RequestParam("date") String d,@RequestParam("time") Double t,@RequestParam("project") int p,@RequestParam("d_id") String d_id) {
         Date dat=new Date();
         DateFormat format=new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
         try {
@@ -120,16 +130,126 @@ public class UserController {
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();
-        ModelAndView model=new ModelAndView("userpanel");
         boolean validDate=isDateInCurrentWeek(dat);
         boolean validProject = PDI.findProjectById(p)!=null;
         boolean validTime = t>=0;
         if(validDate && validProject && validTime) {
-            JDI.addJob(name,p,t,dat);
+            Job j=JDI.findSpecificJob(name,dat,d_id,p);
+            if(j!=null)
+                JDI.eraseJob(j.getId());
+            JDI.addJob(name,p,t,dat,d_id);
         }
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        dat=c.getTime();
+        ModelAndView model=userpanel(format.format(dat));
         model.addObject("vDate",validDate);
         model.addObject("vProj",validProject);
         model.addObject("vTime",validTime);
+        return model;
+    }
+
+    @RequestMapping(value="/changeweek", method = RequestMethod.POST)
+    public @ResponseBody ModelAndView erasejob(@RequestParam("dir") int dir,@RequestParam("date") String d) {
+        Date dat=new Date();
+        DateFormat format=new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        try {
+            dat=format.parse(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(dat);
+        c.add(Calendar.DATE, dir*7);
+        dat = c.getTime();
+        ModelAndView model=userpanel(format.format(dat));
+        return model;
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value="/userpanel", method = RequestMethod.POST)
+    public @ResponseBody ModelAndView userpanel(@RequestParam("date") String d) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        Date dat=new Date();
+        DateFormat format=new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        try {
+            dat=format.parse(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(dat);
+        c.add(Calendar.DATE, 6);
+        Date dat2 = c.getTime();
+
+        User user=UDI.findByUserName(name);
+        List<UserDeps> deps = UDI.getDeps(name);
+        Map<String,Integer> depid = new HashMap<String,Integer>();
+        for(int i=0;i<deps.size();i++) {
+            depid.put(deps.get(i).getDep(),i);
+        }
+        List<Project> proj = PDI.getProjects();
+        ModelAndView model=new ModelAndView("userpanel");
+        List<Job> j= JDI.findJobByUserAndDateBetween(name,dat,dat2);
+        if(j!=null) {
+            List<String> depL = new ArrayList<String>();
+            for(int i=0;i<7*deps.size();i++)
+                depL.add(deps.get(i%deps.size()).getDep());
+            model.addObject("depL",depL);
+            Map<Integer,Project> idName = new HashMap<Integer,Project>();
+            for(int i=0;i<proj.size();i++) {
+                idName.put(proj.get(i).getId(),proj.get(i));
+            }
+            Map<Project,ArrayList<Job> > table = new HashMap<Project,ArrayList<Job> >();
+            Map<Integer,Double> projsum = new HashMap<Integer,Double>();
+            List<Double> datesum = new ArrayList<Double>();
+            for(int in=0;in<7;in++)
+                datesum.add(0.0);
+            Project p;
+            String id;
+            int ind;
+            String dep;
+            for(int i=0;i<j.size();i++) {
+                c.setTime(dat);
+                p=idName.get((j.get(i).getProject_id()));
+                if(!table.containsKey(p)) {
+                    projsum.put(p.getId(),0.0);
+                    for(int ii=0;ii<proj.size();ii++)
+                        if(proj.get(ii).getId()==p.getId())
+                            proj.remove(ii);
+
+                    ArrayList<Job> a=new ArrayList<Job>(deps.size()*7);
+                    table.put(p,a);
+                    for(int ii=0;ii<deps.size()*7;ii++) {
+                        dep=deps.get(ii%deps.size()).getDep();
+                        table.get(p).add(new Job(name,0,0,c.getTime(),dep));
+                        if((ii+1)%deps.size()==0)
+                            c.add(Calendar.DATE,1);
+                    }
+                }
+                ind=(int) TimeUnit.DAYS.convert(j.get(i).getDate().getTime()-dat.getTime(), TimeUnit.MILLISECONDS);
+
+                datesum.set(ind,datesum.get(ind)+j.get(i).getTime());
+                ind= deps.size()*ind+depid.get(j.get(i).getDep());
+
+                table.get(p).set(ind,j.get(i));
+
+                projsum.put(p.getId(),projsum.get(p.getId())+j.get(i).getTime());
+            }
+            model.addObject("projsum",projsum);
+            model.addObject("datesum",datesum);
+            model.addObject("table",table);
+
+        }
+
+        ArrayList<Double> in=new ArrayList<Double>();
+        for(int i=0;i<=48;i++)
+            in.add(i/2.0);
+        model.addObject("in",in);
+        model.addObject("deps",deps);
+        model.addObject("proj",proj);
+        model.addObject("date",d);
         return model;
     }
 
@@ -147,12 +267,9 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/showadminrecords", method = RequestMethod.POST)
     public @ResponseBody ModelAndView showadminrecords(@RequestParam("user") String user_id) {
-        ModelAndView model=new ModelAndView("useradminpanel");
+        ModelAndView model=index(user_id);
         List<Job> j= JDI.findJobByUser(user_id);
         model.addObject("jobs",j);
-        model.addObject("user_id",user_id);
-        User u=UDI.findByUserName(user_id);
-        model.addObject("user",u);
         return model;
     }
 
@@ -160,7 +277,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/addadminjob", method = RequestMethod.POST)
-    public @ResponseBody ModelAndView addadminjob(@RequestParam("date") String d,@RequestParam("time") int t,@RequestParam("project") int p,@RequestParam("user") String user_id) {
+    public @ResponseBody ModelAndView addadminjob(@RequestParam("date") String d,@RequestParam("time") Double t,@RequestParam("project") int p,@RequestParam("user") String user_id,@RequestParam("d_id") String d_id) {
         Date dat=new Date();
         DateFormat format=new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
         try {
@@ -168,59 +285,69 @@ public class UserController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        ModelAndView model=new ModelAndView("useradminpanel");
+
         boolean validProject = PDI.findProjectById(p)!=null;
         boolean validTime = t>=0;
         if(validProject && validTime) {
-            JDI.addJob(user_id,p,t,dat);
+            JDI.addJob(user_id,p,t,dat,d_id);
         }
+        ModelAndView model=index(user_id);
         model.addObject("vProj",validProject);
         model.addObject("vTime",validTime);
         model.addObject("user_id",user_id);
-        User u=UDI.findByUserName(user_id);
-        model.addObject("user",u);
+
+
         return model;
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/deleteadminjob", method = RequestMethod.POST)
     public @ResponseBody ModelAndView deletedminjob(@RequestParam("id") int id,@RequestParam("user") String user_id) {
         Date dat=new Date();
-        ModelAndView model=new ModelAndView("useradminpanel");
         JDI.eraseJob(id);
-        model.addObject("user_id",user_id);
-        User u=UDI.findByUserName(user_id);
-        model.addObject("user",u);
+        ModelAndView model=index(user_id);
+
         return model;
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/changesalary", method = RequestMethod.POST)
     public @ResponseBody ModelAndView changesalary(@RequestParam("salary") float salary,@RequestParam("user") String user_id) {
-        Date dat=new Date();
-        ModelAndView model=new ModelAndView("useradminpanel");
         UDI.changeSalary(user_id,salary);
-        model.addObject("user_id",user_id);
-        User u=UDI.findByUserName(user_id);
-        model.addObject("user",u);
+        ModelAndView model=index(user_id);
+        return model;
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/addbranch", method = RequestMethod.POST)
+    public @ResponseBody ModelAndView addbranch(@RequestParam("branch") String branch,@RequestParam("user") String user_id) {
+        UDDI.addUserDeps(UDI.findByUserName(user_id),branch);
+        ModelAndView model=index(user_id);
         return model;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/adduser_added", method = RequestMethod.POST)
-    public @ResponseBody ModelAndView adduser_added(@RequestParam("username") String username,@RequestParam("password") String password,@RequestParam("department") String dep,@RequestParam("salary") Float salary,@RequestParam("priv") String priv) {
+    public @ResponseBody ModelAndView adduser_added(@RequestParam("username") String username,@RequestParam("password") String password,@RequestParam("salary") Float salary,@RequestParam("priv") String priv,@RequestParam("department") String d_id) {
 
         ModelAndView model=new ModelAndView("adduser");
-        User u=new User(username,password,true,dep,salary);
+        User u=new User(username,password,true,salary);
         boolean added;
         if(UDI.findByUserName(username)==null) {
             UDI.addUser(u);
             URDI.addUserRole(u, "ROLE_USER");
-            if (priv.equals("admin"))
+            UDDI.addUserDeps(u,d_id);
+            if (priv.equals("admin")) {
                 URDI.addUserRole(u, "ROLE_ADMIN");
+                URDI.addUserRole(u, "ROLE_SUBADMIN");
+            }
+            if (priv.equals("subadmin"))
+                URDI.addUserRole(u, "ROLE_SUBADMIN");
             added = true;
         }
         else {
             added=false;
         }
+
         List<Department> deps=DDI.getDepartments();
         model.addObject("deps",deps);
         model.addObject("added",added);
@@ -259,6 +386,21 @@ public class UserController {
         ModelAndView model=new ModelAndView("adddepartment");
         List<Department> x=DDI.getDepartments();
         model.addObject("deps",x);
+        return model;
+    }
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public @ResponseBody ModelAndView hello() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        Date dat=c.getTime();
+        DateFormat format=new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        String date=format.format(dat);
+        ModelAndView model=new ModelAndView("hello");
+        model.addObject("date",date);
+        model.addObject("name",name);
         return model;
     }
 }

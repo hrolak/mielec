@@ -1,6 +1,7 @@
 package com.mielec.job.dao;
 
 
+import com.mielec.department.model.Department;
 import com.mielec.project.dao.ProjectDao;
 import com.mielec.project.model.Project;
 import org.hibernate.HibernateException;
@@ -70,8 +71,8 @@ public class JobDaoImpl implements JobDao {
     }
 
 
-    public void addJob(String user_id,int project_id,int time,Date date) {
-        Job j=new Job(user_id,project_id,time,date);
+    public void addJob(String user_id,int project_id,Double time,Date date, String d_id) {
+        Job j=new Job(user_id,project_id,time,date,d_id);
         Session session;
         try {
             session = sessionFactory.getCurrentSession();
@@ -139,5 +140,96 @@ public class JobDaoImpl implements JobDao {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Job> findJobByUserAndDate(String user_id,Date date) {
+        Session session;
+        List<Job> jobs = new ArrayList<Job>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        jobs = session.createQuery("from job where user_id=? and date=?")
+                .setParameter(0, user_id)
+                .setParameter(1, date)
+                .list();
+
+        if (jobs.size() > 0) {
+            return jobs;
+        } else {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Job> findJobByUserAndDateAndDep(String user_id,Date date,Department dep) {
+        Session session;
+        List<Job> jobs = new ArrayList<Job>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        jobs = session.createQuery("from job where user_id=? and date=? and d_id=?")
+                .setParameter(0, user_id)
+                .setParameter(1, date)
+                .setParameter(2, dep)
+                .list();
+
+        if (jobs.size() > 0) {
+            return jobs;
+        } else {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public Job findSpecificJob(String user_id,Date date,String dep,int proj) {
+        Session session;
+        List<Job> jobs = new ArrayList<Job>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        jobs = session.createQuery("from job where user_id=? and date=? and d_id=? and project_id=?")
+                .setParameter(0, user_id)
+                .setParameter(1, date)
+                .setParameter(2, dep)
+                .setParameter(3, proj)
+                .list();
+
+        if (jobs.size() > 0) {
+            return jobs.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Job> findJobByUserAndDateBetween(String user_id,Date date,Date date2) {
+        Session session;
+        List<Job> jobs = new ArrayList<Job>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        jobs = session.createQuery("from job where user_id=? and date>=? and date<=? order by id desc")
+                .setParameter(0, user_id)
+                .setParameter(1, date)
+                .setParameter(2, date2)
+                .list();
+
+        if (jobs.size() > 0) {
+            return jobs;
+        } else {
+            return null;
+        }
+    }
 
 }

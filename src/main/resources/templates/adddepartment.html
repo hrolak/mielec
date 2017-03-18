@@ -20,15 +20,15 @@
     }
     //]]>
 </script>
-<p>Dodaj dział:</p>
+<p>Dodaj branżę:</p>
 <form th:action="@{/adddepartment_added}" method="post">
     <table>
         <tr>
-            <td align="right">Symbol działu: </td>
+            <td align="right">Symbol branży: </td>
             <td align="left"><input type="text" maxlength="3" name="d_id" id="d_id"/></td>
         </tr>
         <tr>
-            <td align="right">Nazwa działu: </td>
+            <td align="right">Nazwa branży: </td>
             <td align="left"><input type="text" name="name" id="name"/></td>
         </tr>
 
@@ -36,10 +36,10 @@
     <input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/>
 </form>
 <div th:if="${added==false}">
-    <font color="red">Dział dodany.</font>
+    <font color="red">Branża dodana.</font>
 </div>
 <div th:if="${added}">
-    <font color="red">Dział o podanym symbolu już istnieje.</font>
+    <font color="red">Branża o podanym symbolu już istnieje.</font>
 </div>
 <form th:action="@{/}" method="get">
     <input type="submit" value="Menu" style="height:30px; width:200px"/>

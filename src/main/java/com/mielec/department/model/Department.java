@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
+import com.mielec.users.model.UserDeps;
 import com.mielec.users.model.UserRole;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ public class Department {
 
     private String id;
     private String name;
+    private Set<UserDeps> userDeps = new HashSet<UserDeps>(0);
 
     public Department() {
     }
@@ -54,5 +56,12 @@ public class Department {
         this.name=name;
     }
 
+   /* @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")
+    public Set<UserDeps> getUserDeps() {
+        return this.userDeps;
+    }
 
+    public void setUserDeps(Set<UserDeps> userDeps) {
+        this.userDeps = userDeps;
+    } */
 }

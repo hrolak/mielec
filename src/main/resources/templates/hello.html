@@ -32,30 +32,32 @@
     }
     //]]>
 </script>
-
-<form th:action="@{/userpanel}" method="get">
-    <input type="submit" value="Panel użytkownika"  style="height:30px; width:200px"/>
+<div align="center">
+<h1 th:text="${'Jesteś zalogowany jako: ' + name}"></h1>
+<form th:action="@{/userpanel}" method="post">
+    <input type="hidden" name="date" th:value="${date}"/>
+    <input type="submit" value="Panel użytkownika"  style="height:60px; width:400px"/>
 </form>
 <div sec:authorize="hasRole('ROLE_ADMIN')">
+    <form th:action="@{/project}" method="get">
+        <input type="submit" value="Analizuj temat"  style="height:60px; width:400px"/>
+    </form>
 <form th:action="@{/user}" method="get">
-    <input type="submit" value="Analizuj użytkownika"  style="height:30px; width:200px"/>
-</form>
-<form th:action="@{/project}" method="get">
-    <input type="submit" value="Analizuj projekt"  style="height:30px; width:200px"/>
+    <input type="submit" value="Analizuj użytkownika"  style="height:60px; width:400px"/>
 </form>
 <form th:action="@{/adduser}" method="get">
-    <input type="submit" value="Dodaj użytkownika"  style="height:30px; width:200px"/>
+    <input type="submit" value="Dodaj użytkownika"  style="height:60px; width:400px"/>
 </form>
 <form th:action="@{/addproject}" method="get">
-    <input type="submit" value="Dodaj projekt"  style="height:30px; width:200px"/>
+    <input type="submit" value="Dodaj temat"  style="height:60px; width:400px"/>
 </form>
 <form th:action="@{/adddepartment}" method="get">
-    <input type="submit" value="Dodaj dział"  style="height:30px; width:200px"/>
+    <input type="submit" value="Dodaj branżę"  style="height:60px; width:400px"/>
 </form>
 </div>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj"  style="height:30px; width:200px"/>
+    <input type="submit" value="Wyloguj"  style="height:60px; width:400px"/>
 </form>
-
+</div>
 </body>
 </html>

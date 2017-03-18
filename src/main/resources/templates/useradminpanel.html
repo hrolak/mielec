@@ -75,11 +75,21 @@
         </tr>
     </table>
 </div>
-<form th:action="@{/addadminjob}" method="post">
+<form th:action="@{/addbranch}" method="post" id="form">
+    <input name="user" type="hidden" th:value="${user_id}" />
+    <label> Branża: <select name="branch" id="adeps" form="form">
+        <option  th:each="dep : ${adeps}" th:value="${dep.getId()}" th:text="${dep.getId()}"></option>
+    </select> </label>
+    <input type="submit" value="Dodaj"/>
+</form>
+<form th:action="@{/addadminjob}" method="post" id="form">
     <input name="user" type="hidden" th:value="${user_id}" />
     <label> Data: <input type="date" name="date" id="dat_id"/> </label>
-    <label> Numer projektu: <input type="number" name="project" id="num_id"/> </label>
+    <label> Numer tematu: <input type="number" name="project" id="num_id"/> </label>
     <label> Czas trwania: <input type="number" name="time" id="tim_id"/> </label>
+    <label> Branża: <select name="d_id" id="deps" form="form">
+        <option  th:each="dep : ${deps}" th:value="${dep.getDep()}" th:text="${dep.getDep()}"></option>
+    </select> </label>
     <input type="submit" value="Dodaj" onclick="return empty()"/>
 </form>
 <form th:action="@{/deleteadminjob}" method="post">

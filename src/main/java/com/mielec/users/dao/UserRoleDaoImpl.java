@@ -1,17 +1,17 @@
 package com.mielec.users.dao;
 
-import java.util.ArrayList;
-import java.util.List;
+        import java.util.ArrayList;
+        import java.util.List;
 
-import com.mielec.users.model.User;
-import com.mielec.users.model.UserRole;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
+        import com.mielec.users.model.User;
+        import com.mielec.users.model.UserRole;
+        import org.hibernate.HibernateException;
+        import org.hibernate.Session;
+        import org.hibernate.SessionFactory;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Repository;
+        import org.springframework.transaction.annotation.EnableTransactionManagement;
+        import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class UserRoleDaoImpl {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mielec.users.model.User;
+import com.mielec.users.model.UserDeps;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -68,8 +69,8 @@ public class UserDaoImpl implements UserDao {
                 .list();
         return users;
     }
-    public void addUser(String username,String password,String department,Float salary) {
-        User u=new User(username,password,true,department,salary);
+    public void addUser(String username,String password,Float salary) {
+        User u=new User(username,password,true,salary);
         Session session;
         try {
             session = sessionFactory.getCurrentSession();
@@ -90,5 +91,24 @@ public class UserDaoImpl implements UserDao {
         session.beginTransaction();
         session.save(user);
         session.getTransaction().commit();
+    }
+
+    public List<UserDeps> getDeps(String username) {
+        Session session;
+        List<UserDeps> deps = new ArrayList<UserDeps>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        deps = session.createQuery("from user_deps where username=?")
+                .setParameter(0, username)
+                .list();
+
+        if (deps.size() > 0) {
+            return deps;
+        } else {
+            return null;
+        }
     }
 }

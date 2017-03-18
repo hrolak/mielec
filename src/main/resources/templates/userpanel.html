@@ -3,19 +3,36 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <style>
+        body {
+            background-color: #d3d3d3;
+        }
         table.one {
             font-family: arial, sans-serif;
             border-collapse: collapse;
-            width: 100%;
+            align: center;
+            width: 76%;
+            margin-left:12%;
+            margin-right:12%;
         }
-        td.one, th.one {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
+        td.one, th.one th.two td.two {
+            border: 1px solid #000000;
+            text-align: center;
+            padding: 1px;
+            width: auto;
         }
-
-        tr:nth-child(even).one {
-            background-color: #dddddd;
+        select {
+            width:100%!important;
+            height:100%!important;
+            border: 0px;
+            font-size: large;
+        }
+        tr.two {
+            border: 1px solid #000000;
+            background-color: #e6e6e6;
+        }
+        tr.one {
+            border: 1px solid #000000;
+            background-color: #ffffff;
         }
     </style>
 </head>
@@ -37,23 +54,78 @@
         //]]>
     }
 </script>
-<form th:action="@{/addjob}" method="post">
-    <table>
-        <tr>
-            <td align="right">Data:  </td>
-            <td align="left"><input type="date" name="date" id="dat_id"/></td>
+<form align="left" th:action="@{/changeweek}" method="post">
+    <input type="hidden" name="dir" value="-1"/>
+    <input type="hidden" name="date" th:value="${date}"/>
+    <input type="submit" name="prevweek" id="dat_id" value="Poprzedni tydzień" style="height:30px; width:200px" />
+</form >
+
+<h1 th:text="'Tydzień: ' + ${date}"></h1>
+<div th:if="${table!=null}">
+    <table class="one">
+        <tr class="one">
+            <th class="one">TEMAT</th>
+            <th th:colspan="${deps.size()}" class="one">PON</th>
+            <th th:colspan="${deps.size()}" class="one">WT</th>
+            <th th:colspan="${deps.size()}" class="one">ŚRO</th>
+            <th th:colspan="${deps.size()}" class="one">CZW</th>
+            <th th:colspan="${deps.size()}" class="one">PT</th>
+            <th th:colspan="${deps.size()}" class="one">SOB</th>
+            <th th:colspan="${deps.size()}" class="one">NIE</th>
+            <th class="one">SUM</th>
         </tr>
-        <tr>
-            <td align="right">Numer projektu: </td>
-            <td align="left"><input type="number" name="project" id="num_id"/></td>
+        <tr class="one">
+            <th></th>
+            <th th:each="i : ${depL}" th:text="${i}"></th>
+            <th></th>
         </tr>
-        <tr>
-            <td align="right">Czas trwania: </td>
-            <td align="left"><input type="number" name="time" id="tim_id"/></td>
+        <tr class="one" th:each="row : ${table}">
+            <td class="one" th:text="${row.key.getName()}">Onions</td>
+            <form th:action="@{/addjob}" th:each="cell : ${row.value}" method="post" th:id="${cell.getDate() + cell.getDep() + row.key}">
+                <input type="hidden" name="date" th:value="${#calendars.format(cell.getDate(),'yyyy-MM-dd')}" />
+                <input type="hidden" name="d_id" th:value="${cell.getDep()}" />
+                <input type="hidden" name="project" th:value="${row.key.getId()}" />
+            <td class="one"><select name="time" th:form="${cell.getDate() + cell.getDep() + row.key}" onchange="this.form.submit()">
+                <option th:each="i : ${in}" th:value="${i}" th:text="${i}" th:selected="(${cell.getTime()} == ${i})" ></option>
+            </select></td>
+            </form>
+            <td class="total" ><p th:text="${projsum.get(row.key.getId())}"></p></td>
         </tr>
+        <tr class="two">
+            <td class="two">SUM</td>
+            <td class="two" th:colspan="${deps.size()}" th:each="val : ${datesum}"><p th:text="${val}"></p></td>
+            <td></td>
+        </tr>
+        <form th:action="@{/addjob}" method="post" id="form">
+
+            <tr class="one">
+                <td class="one" ><select name="project" id="proj" form="form">
+                    <option  th:each="p : ${proj}" th:value="${p.getId()}" th:text="${p.getId().toString() + ' - ' + p.getName()}"></option>
+                </select></td>
+                <input type="hidden" name="time" id="tim_id" value="0"/>
+                <input type="hidden" name="d_id" id="depid" th:value="${deps.get(0).getDep()}" />
+                <td class="one"><input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:60px"/></td>
+            </tr>
+            <input type="hidden" name="date" id="date2" th:value="${date}"/>
+        </form>
     </table>
-    <input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/>
-</form>
+</div>
+<div th:if="${table==null}">
+    <table class="one">
+        <form th:action="@{/addjob}" method="post" id="form">
+
+            <tr class="one">
+                <td class="one" ><select name="project" id="proj" form="form">
+                    <option  th:each="p : ${proj}" th:value="${p.getId()}" th:text="${p.getId().toString() + ' - ' + p.getName()}"></option>
+                </select></td>
+                <input type="hidden" name="time" id="tim_id" value="0"/>
+                <input type="hidden" name="d_id" id="depid" th:value="${deps.get(0).getDep()}" />
+                <td class="one"><input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/></td>
+            </tr>
+            <input type="hidden" name="date" id="date2" th:value="${date}"/>
+        </form>
+    </table>
+</div>
 <div th:if="${vDate==false}">
     <font color="red">Data nieprawidłowa.</font>
 </div>
@@ -63,28 +135,15 @@
 <div th:if="${vTime==false}">
     <font color="red">Nieprawidłowy czas.</font>
 </div>
-<form th:action="@{/showrecords}" method="post">
-    <input type="submit" value="Pokaż rekordy" style="height:30px; width:200px"/>
-</form>
+<form align="left" th:action="@{/changeweek}" method="post">
+    <input type="hidden" name="dir" value="1"/>
+    <input type="hidden" name="date" th:value="${date}"/>
+    <input type="submit" name="prevweek" id="dat_id" value="Następny tydzień" style="height:30px; width:200px"/>
+</form >
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Wyloguj" style="height:30px; width:200px"/>
 </form>
-<div th:if="${jobs!=null}">
-    <table class="one">
-        <tr class="one">
-            <th class="one">ID</th>
-            <th class="one">PROJEKT</th>
-            <th class="one">CZAS</th>
-            <th class="one">DATA</th>
-        </tr>
-        <tr class="one" th:each="job : ${jobs}">
-            <td class="one" th:text="${job.getId()}">Onions</td>
-            <td class="one" th:text="${job.getProject_id()}">2.41</td>
-            <td class="one" th:text="${job.getTime()}">yes</td>
-            <td class="one" th:text="${job.getDate()}"></td>
-        </tr>
-    </table>
-</div>
+
 
 
 

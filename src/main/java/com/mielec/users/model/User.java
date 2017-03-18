@@ -16,18 +16,16 @@ public class User {
     private String username;
     private String password;
     private boolean enabled;
-    private String d_id;
     private Float salary;
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
-
+    private Set<UserDeps> userDeps = new HashSet<UserDeps>(0);
     public User() {
     }
 
-    public User(String username, String password, boolean enabled,String d_id,Float salary) {
+    public User(String username, String password, boolean enabled,Float salary) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
-        this.d_id=d_id;
         this.salary=salary;
     }
 
@@ -36,7 +34,6 @@ public class User {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
-        this.d_id=d_id;
         this.salary=salary;
         this.userRole = userRole;
     }
@@ -50,16 +47,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    @Column(name = "d_id",
-            nullable = false, length = 3)
-    public String getD_id() {
-        return this.d_id;
-    }
-
-    public void setD_id(String d_id) {
-        this.d_id = d_id;
     }
 
     @Column(name = "password",
@@ -97,6 +84,15 @@ public class User {
 
     public void setUserRole(Set<UserRole> userRole) {
         this.userRole = userRole;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    public Set<UserDeps> getUserDeps() {
+        return this.userDeps;
+    }
+
+    public void setUserDeps(Set<UserRole> userRole) {
+        this.userDeps = userDeps;
     }
 
 }

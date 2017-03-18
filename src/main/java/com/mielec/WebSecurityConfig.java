@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/project/**").access("hasRole('ROLE_USER')")
                 .antMatchers("/hello").access("hasRole('ROLE_USER')")
                 .antMatchers("/").access("hasRole('ROLE_USER')")
-                .antMatchers("/addproject").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/addproject").access("hasRole('ROLE_SUBADMIN')")
                 .antMatchers("/userpanel").access("hasRole('ROLE_USER')")
                 .antMatchers("/showrecords").access("hasRole('ROLE_USER')")
                 .and()

@@ -4,6 +4,7 @@
 <head>
 </head>
 <body>
+<div align="center">
 <p>Wybierz użytkownika</p>
 <p id="user"></p>
 
@@ -11,15 +12,15 @@
     <div><select name="id" id="user" form="form_id" style="width:200px">
         <option  th:each="dep : ${users}" th:value="${dep.getUsername()}" th:text="${dep.getUsername()}"></option>
     </select></div>
-    <input type="submit" value="Otwórz" style="height:30px; width:200px"/>
+    <input type="submit" value="Otwórz" style="height:60px; width:400px"/>
 </form>
 <form th:action="@{/}" method="get">
-    <input type="submit" value="Menu" style="height:30px; width:200px"/>
+    <input type="submit" value="Menu" style="height:60px; width:400px"/>
 </form>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj" style="height:30px; width:200px"/>
+    <input type="submit" value="Wyloguj" style="height:60px; width:400px"/>
 </form>
-
+</div>
 
 
 

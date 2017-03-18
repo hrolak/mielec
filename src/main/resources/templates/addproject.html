@@ -21,11 +21,11 @@
     }
 //]]>
 </script>
-<p>Dodaj projekt:</p>
+<p>Dodaj temat:</p>
 <form th:action="@{/addproject_added}" method="post">
     <table>
         <tr>
-            <td align="right">Numer projektu:  </td>
+            <td align="right">Numer tematu:  </td>
             <td align="left"><input type="number" name="project_id" id="proj_id"/></td>
         </tr>
         <tr>
@@ -37,10 +37,10 @@
     <input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/>
 </form>
 <div th:if="${added==false}">
-    <font color="red">Projekt dodany.</font>
+    <font color="red">Temat dodany.</font>
 </div>
 <div th:if="${added}">
-    <font color="red">Projekt o podanym numerze już istnieje.</font>
+    <font color="red">Temat o podanym numerze już istnieje.</font>
 </div>
 <form th:action="@{/}" method="get">
     <input type="submit" value="Menu" style="height:30px; width:200px"/>
