@@ -3,60 +3,44 @@
       xmlns:sec="http://www.springframework.org/security/tags">
 
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Choose worker, project or add an working hours </title>
+    <style>
+        input {
+            height:60px; 
+            width:400px;
+            font-size: larger;
+        }
+    </style>
 </head>
 <body>
 <p id="hello"></p>
 
-<script th:inline="javascript">
-    //<![CDATA[
-    var array = [[${projects}]];
-    if(array.length!=0) {
-        var myDiv = document.getElementById("myDiv");
-
-        //Create array of options to be added
-
-
-        //Create and append select list
-        var selectList = document.createElement("select");
-        selectList.id = "mySelect";
-        document.body.appendChild(selectList);
-
-        //Create and append the options
-        for (var i = 0; i < array.length; i++) {
-            var option = document.createElement("option");
-            option.value = array[i];
-            option.text = array[i];
-            selectList.appendChild(option);
-        }
-    }
-    //]]>
-</script>
 <div align="center">
 <h1 th:text="${'Jesteś zalogowany jako: ' + name}"></h1>
 <form th:action="@{/userpanel}" method="post">
     <input type="hidden" name="date" th:value="${date}"/>
-    <input type="submit" value="Panel użytkownika"  style="height:60px; width:400px"/>
+    <input type="submit" value="Panel użytkownika"  />
 </form>
 <div sec:authorize="hasRole('ROLE_ADMIN')">
     <form th:action="@{/project}" method="get">
-        <input type="submit" value="Analizuj temat"  style="height:60px; width:400px"/>
+        <input type="submit" value="Analizuj temat"  />
     </form>
 <form th:action="@{/user}" method="get">
-    <input type="submit" value="Analizuj użytkownika"  style="height:60px; width:400px"/>
+    <input type="submit" value="Analizuj użytkownika"  />
 </form>
 <form th:action="@{/adduser}" method="get">
-    <input type="submit" value="Dodaj użytkownika"  style="height:60px; width:400px"/>
+    <input type="submit" value="Dodaj użytkownika"  />
 </form>
-<form th:action="@{/addproject}" method="get">
-    <input type="submit" value="Dodaj temat"  style="height:60px; width:400px"/>
+<form th:action="@{/addproject}" method="post">
+    <input type="submit" value="Dodaj temat"  />
 </form>
 <form th:action="@{/adddepartment}" method="get">
-    <input type="submit" value="Dodaj branżę"  style="height:60px; width:400px"/>
+    <input type="submit" value="Dodaj branżę"  />
 </form>
 </div>
 <form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj"  style="height:60px; width:400px"/>
+    <input type="submit" value="Wyloguj"  />
 </form>
 </div>
 </body>

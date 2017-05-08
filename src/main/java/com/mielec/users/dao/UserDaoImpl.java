@@ -93,6 +93,19 @@ public class UserDaoImpl implements UserDao {
         session.getTransaction().commit();
     }
 
+    public void eraseUser(String username) {
+        User u=findByUserName(username);
+        Session session;
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        session.beginTransaction();
+        session.delete(u);
+        session.getTransaction().commit();
+    }
+
     public List<UserDeps> getDeps(String username) {
         Session session;
         List<UserDeps> deps = new ArrayList<UserDeps>();

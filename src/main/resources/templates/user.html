@@ -2,14 +2,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
+    <style>
+        select {
+            font-size: xx-large;
+        }
+        input {
+            font-size: larger;
+        }
+    </style>
 </head>
 <body>
 <div align="center">
-<p>Wybierz użytkownika</p>
+<h1>Wybierz użytkownika</h1>
 <p id="user"></p>
 
 <form th:action="@{/user}" method="post" id="form_id">
-    <div><select name="id" id="user" form="form_id" style="width:200px">
+    <div><select name="id" id="user" form="form_id" style="width:400px">
         <option  th:each="dep : ${users}" th:value="${dep.getUsername()}" th:text="${dep.getUsername()}"></option>
     </select></div>
     <input type="submit" value="Otwórz" style="height:60px; width:400px"/>

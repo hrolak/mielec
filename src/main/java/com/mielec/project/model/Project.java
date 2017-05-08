@@ -14,7 +14,7 @@ import javax.persistence.Table;
 
 @Entity(name = "project")
 @Table(name = "project")
-public class Project {
+public class Project implements Comparable<Project> {
 
     private int id;
     private String name;
@@ -26,6 +26,16 @@ public class Project {
     public Project(int id,String name) {
         this.id=id;
         this.name=name;
+    }
+
+    public int compareTo(Project o)
+    {
+        if(this.id == o.getId())
+            return 0;
+        else if (this.id < o.getId())
+            return 1;
+        else
+            return -1;
     }
 
     @Id

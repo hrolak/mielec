@@ -3,23 +3,25 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <style>
-        table {
+        table.one {
             font-family: arial, sans-serif;
             border-collapse: collapse;
             width: 100%;
         }
-
+        table {
+            border: 0px;
+        }
         td, th {
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
         }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
         input {
             width: 200px;
+            font-size: larger;
+        }
+        text {
+            font-size: larger;
         }
     </style>
 </head>
@@ -56,11 +58,19 @@
             alert("Uzupełnij wszystkie pola");
             return false;
         };
-        //]]>
+
     }
+    function setVisible(id) {
+        var ids = ['addh', 'eraseh', 'eraseb', 'chs','addb'];
+        for (i = 0; i < ids.length; i++) {
+            document.getElementById(ids[i]).style.visibility = ids[i]==id ? 'visible' : 'hidden';
+            document.getElementById(ids[i]).style.display = ids[i]==id ? 'inline' : 'none';
+        }
+    }
+    //]]>
 </script>
 <div th:if="${user!=null}">
-    <table>
+    <table class="one">
         <tr>
             <th>UŻYTKOWNIK</th>
             <th>STAWKA</th>
@@ -75,67 +85,120 @@
         </tr>
     </table>
 </div>
+<br/>
+<table>
+    <tr>
+        <td>
+<div align="left"><input type="submit" value="Dodaj branżę" onclick="setVisible('addb')" /></div>
+<div align="left"><input type="submit" value="Usuń branżę" onclick="setVisible('eraseb')" /></div>
+<div align="left"><input type="submit" value="Dodaj godziny" onclick="setVisible('addh')" /></div>
+<div align="left"><input type="submit" value="Usuń godziny" onclick="setVisible('eraseh')" /></div>
+<div align="left"><input type="submit" value="Zmień stawkę" onclick="setVisible('chs')" /></div>
+<form align="left" th:action="@{/showadminrecords}" method="post">
+    <input name="user" type="hidden" th:value="${user_id}" />
+    <input type="submit" value="Pokaż godziny"/>
+</form>
+            <div align="left">
+    <form align="left" th:action="@{/}" method="get">
+        <input type="submit" value="Menu" />
+    </form>
+            </div>
+            <div align="left">
+    <form align="left" th:action="@{/logout}" method="post">
+        <input type="submit" value="Wyloguj"/>
+    </form>
+            </div>
+        </td>
+    <td>
+<div id='addb' style="visibility: hidden; display: none">
 <form th:action="@{/addbranch}" method="post" id="form">
     <input name="user" type="hidden" th:value="${user_id}" />
     <label> Branża: <select name="branch" id="adeps" form="form">
-        <option  th:each="dep : ${adeps}" th:value="${dep.getId()}" th:text="${dep.getId()}"></option>
+        <option  th:each="dep : ${adeps}" th:value="${dep.getId()}" th:text="${dep.getName()}"></option>
     </select> </label>
     <input type="submit" value="Dodaj"/>
 </form>
-<form th:action="@{/addadminjob}" method="post" id="form">
+</div>
+        <div id='eraseb' style="visibility: hidden; display: none">
+            <form th:action="@{/erasebranch}" method="post" id="form3">
+                <input name="user" type="hidden" th:value="${user_id}" />
+                <label> Branża: <select name="branch" id="adeps" form="form3">
+                    <option  th:each="dep : ${adeps}" th:value="${dep.getId()}" th:text="${dep.getName()}"></option>
+                </select> </label>
+                <input type="submit" value="Usuń"/>
+            </form>
+        </div>
+<div id='addh' style="visibility: hidden; display: none">
+<form th:action="@{/addadminjob}" method="post" id="formx">
     <input name="user" type="hidden" th:value="${user_id}" />
-    <label> Data: <input type="date" name="date" id="dat_id"/> </label>
-    <label> Numer tematu: <input type="number" name="project" id="num_id"/> </label>
-    <label> Czas trwania: <input type="number" name="time" id="tim_id"/> </label>
-    <label> Branża: <select name="d_id" id="deps" form="form">
-        <option  th:each="dep : ${deps}" th:value="${dep.getDep()}" th:text="${dep.getDep()}"></option>
-    </select> </label>
-    <input type="submit" value="Dodaj" onclick="return empty()"/>
+    <table>
+        <tr>
+            <td> Data: </td><td><input type="date" name="date" id="dat_id"/> </td>
+        </tr>
+        <tr>
+            <td> Numer tematu: </td><td> <input type="number" name="project" id="num_id"/></td>
+        </tr>
+        <tr>
+            <td> Czas trwania: </td><td><input type="number" name="time" id="tim_id"/> </td>
+        </tr>
+        <tr>
+            <td> Branża: </td><td><select name="d_id" id="deps" form="formx">
+            <option  th:each="dep : ${deps}" th:value="${dep.getId()}" th:text="${dep.getName()}"></option>
+        </select> </td>
+        </tr>
+        <tr>
+            <td> </td><td><input type="submit" value="Dodaj" onclick="return empty()"/> </td>
+        </tr>
+    </table>
 </form>
+</div>
+<div id='eraseh' style="visibility: hidden; display: none">
 <form th:action="@{/deleteadminjob}" method="post">
     <input name="user" type="hidden" th:value="${user_id}" />
     <label> ID rekordu: <input type="number" name="id" id="r_id"/> </label>
     <input type="submit" value="Usuń" onclick="return empty2()"/>
 </form>
+</div>
+<div id='chs' style="visibility: hidden; display: none">
 <form th:action="@{/changesalary}" method="post">
     <input name="user" type="hidden" th:value="${user_id}" />
     <label> Stawka: <input type="number" name="salary" id="s_id"/> </label>
     <input type="submit" value="Zmień stawke" onclick="return empty3()"/>
 </form>
-<div th:if="${vProj==false}">
+</div>
+<div th:if="${vProj==false}" >
     <font color="red"> Nie znaleziono projektu.</font>
 </div>
 <div th:if="${vTime==false}">
     <font color="red">Nieprawidłowy czas.</font>
 </div>
-<form th:action="@{/showadminrecords}" method="post">
-    <input name="user" type="hidden" th:value="${user_id}" />
-    <input type="submit" value="Pokaż rekordy"/>
-</form>
-<form th:action="@{/}" method="get">
-    <input type="submit" value="Menu" />
-</form>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Wyloguj"/>
-</form>
+
+
+
+    </td>
+    </tr>
+</table>
 <div th:if="${jobs!=null}">
     <table>
         <tr>
             <th>ID</th>
-            <th>PROJEKT</th>
+            <th>TEMAT</th>
             <th>CZAS</th>
             <th>DATA</th>
         </tr>
-        <tr th:each="job : ${jobs}">
-            <td th:text="${job.getId()}">Onions</td>
-            <td th:text="${job.getProject_id()}">2.41</td>
-            <td th:text="${job.getTime()}">yes</td>
-            <td th:text="${job.getDate()}"></td>
+        <div th:each="i : ${#numbers.sequence( 0, jobs.size()-2)}">
+        <tr>
+            <td th:text="${jobs.get(__${i}__).getId()}">Onions</td>
+            <td th:text="${projs.get(jobs.get(__${i}__).getProject_id())}">2.41</td>
+            <td th:text="${jobs.get(__${i}__).getTime()}">yes</td>
+            <td th:text="${#dates.format(jobs.get(__${i}__).getDate(), 'dd-MM-yyyy')}"></td>
         </tr>
+            <tr th:if="${jobs.get(__${i}__).getDate()!=jobs.get(__${i+1}__).getDate()}" >
+                <td colspan="4" height="2" bgcolor="#000000"></td>
+            </tr>
+        </div>
     </table>
 </div>
-
-
 
 
 </body>

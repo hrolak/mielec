@@ -70,7 +70,7 @@ public class ProjectDaoImpl implements  ProjectDao{
             session = sessionFactory.openSession();
         }
         //"select u from User u where u.username = ?1"
-        projects = session.createQuery("from project")
+        projects = session.createQuery("from project order by id desc")
                 .list();
         return projects;
     }
@@ -87,4 +87,35 @@ public class ProjectDaoImpl implements  ProjectDao{
         session.getTransaction().commit();
     }
 
+    public void renameProject(int id,String name) {
+        Project p=findProjectById(id);
+        Session session;
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        session.beginTransaction();
+        session.delete(p);
+        session.getTransaction().commit();
+        p.setName(name);
+        session.beginTransaction();
+        session.save(p);
+        session.getTransaction().commit();
+    }
+
+    public void eraseProject(int id) {
+        Project p=findProjectById(id);
+        Session session;
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        session.beginTransaction();
+        session.delete(p);
+        session.getTransaction().commit();
+
+
+    }
 }

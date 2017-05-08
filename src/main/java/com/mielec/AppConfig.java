@@ -54,7 +54,7 @@ public class AppConfig {
     public DriverManagerDataSource dataSource() {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
         driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        driverManagerDataSource.setUrl("jdbc:mysql://164.132.104.165:3306/mielec");
+        driverManagerDataSource.setUrl("jdbc:mysql://localhost:3306/mielec?useUnicode=yes&characterEncoding=UTF-8");
         driverManagerDataSource.setUsername("mielec");
         driverManagerDataSource.setPassword("mielec");
         return driverManagerDataSource;

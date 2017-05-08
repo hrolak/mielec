@@ -2,6 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
+    <style>
+        table.one {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td.one, th.one {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
 </head>
 <body>
 <p id="adddepartment"></p>
@@ -20,7 +33,10 @@
     }
     //]]>
 </script>
-<p>Dodaj branżę:</p>
+<table class="one">
+    <tr class="one">
+        <td class="one">
+<p>Dodaj branżę/zmień nazwę:</p>
 <form th:action="@{/adddepartment_added}" method="post">
     <table>
         <tr>
@@ -33,8 +49,25 @@
         </tr>
 
     </table>
-    <input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/>
+    <input type="submit" value="Dodaj/Zmień nazwę" onclick="return empty()" style="height:30px; width:200px"/>
 </form>
+        </td>
+        <td class="one">
+            <p>Usuń branżę:</p>
+            <form th:action="@{/erasedepartment}" method="post" id="form3">
+                <table>
+                    <tr>
+                        <select name="d_id" id="deps" form="form3">
+                            <option  th:each="dep : ${deps}" th:value="${dep.getId()}" th:text="${dep.getName()}"></option>
+                        </select>
+                    </tr>
+                    <tr style="height:25px" ></tr>
+                </table>
+                <input type="submit" value="Usuń" style="height:30px; width:200px"/>
+            </form>
+        </td>
+    </tr>
+</table>
 <div th:if="${added==false}">
     <font color="red">Branża dodana.</font>
 </div>

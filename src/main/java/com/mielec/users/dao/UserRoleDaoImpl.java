@@ -32,4 +32,41 @@ public class UserRoleDaoImpl {
         session.getTransaction().commit();
     }
 
+    @SuppressWarnings("unchecked")
+    public UserRole findRoleByUser(String username) {
+        Session session;
+        List<UserRole> projects = new ArrayList<UserRole>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        projects = session.createQuery("from user_roles where username=?")
+                .setParameter(0, username)
+                .list();
+
+        if (projects.size() > 0) {
+            return projects.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public void eraseRoles(String username) {
+        UserRole u=new UserRole();
+        while((u=findRoleByUser(username))!=null)
+        {
+            Session session;
+            try {
+                session = sessionFactory.getCurrentSession();
+            } catch (HibernateException e) {
+                session = sessionFactory.openSession();
+            }
+            session.beginTransaction();
+            session.delete(u);
+            session.getTransaction().commit();
+        }
+    }
+
 }

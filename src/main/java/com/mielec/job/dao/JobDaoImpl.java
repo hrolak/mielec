@@ -117,6 +117,26 @@ public class JobDaoImpl implements JobDao {
             return null;
         }
     }
+    @SuppressWarnings("unchecked")
+    public List<Job> findJobByProjectNotNull(int project_id) {
+        Session session;
+        List<Job> jobs = new ArrayList<Job>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        jobs = session.createQuery("from job where project_id=? and time!=0")
+                .setParameter(0, project_id)
+                .list();
+
+        if (jobs.size() > 0) {
+            return jobs;
+        } else {
+            return null;
+        }
+    }
 
 
     @SuppressWarnings("unchecked")
@@ -130,6 +150,27 @@ public class JobDaoImpl implements JobDao {
         }
         //"select u from User u where u.username = ?1"
         jobs = session.createQuery("from job where user_id=?")
+                .setParameter(0, user_id)
+                .list();
+
+        if (jobs.size() > 0) {
+            return jobs;
+        } else {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Job> findJobByUserDateSorted(String user_id) {
+        Session session;
+        List<Job> jobs = new ArrayList<Job>();
+        try {
+            session = sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        //"select u from User u where u.username = ?1"
+        jobs = session.createQuery("from job where user_id=? order by date desc")
                 .setParameter(0, user_id)
                 .list();
 
@@ -219,7 +260,7 @@ public class JobDaoImpl implements JobDao {
             session = sessionFactory.openSession();
         }
         //"select u from User u where u.username = ?1"
-        jobs = session.createQuery("from job where user_id=? and date>=? and date<=? order by id desc")
+        jobs = session.createQuery("from job where user_id=? and date>=? and date<=? order by project_id desc")
                 .setParameter(0, user_id)
                 .setParameter(1, date)
                 .setParameter(2, date2)

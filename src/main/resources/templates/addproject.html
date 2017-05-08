@@ -2,6 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        table.one {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td.one, th.one {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
 </head>
 <body>
 <p id="addproject"></p>
@@ -21,7 +35,10 @@
     }
 //]]>
 </script>
-<p>Dodaj temat:</p>
+<table class="one">
+    <tr class="one">
+        <td class="one">
+<p>Dodaj temat/zmień nazwę:</p>
 <form th:action="@{/addproject_added}" method="post">
     <table>
         <tr>
@@ -34,8 +51,25 @@
         </tr>
 
     </table>
-    <input type="submit" value="Dodaj" onclick="return empty()" style="height:30px; width:200px"/>
+    <input type="submit" value="Dodaj/Zmień nazwę" onclick="return empty()" style="height:30px; width:200px"/>
 </form>
+        </td>
+        <td class="one">
+            <p>Usuń temat:</p>
+            <form th:action="@{/eraseproject}" method="post" id="form_id">
+                <table>
+                    <tr>
+                        <select name="project_id" id="proj" form="form_id" >
+                            <option  th:each="dep : ${projs}" th:value="${dep.getId()}" th:text="${dep.getId()+' - '+dep.getName()}"></option>
+                        </select>
+                    </tr>
+                    <tr style="height:25px" ></tr>
+                </table>
+                <input type="submit" value="Usuń" style="height:30px; width:200px"/>
+            </form>
+        </td>
+    </tr>
+</table>
 <div th:if="${added==false}">
     <font color="red">Temat dodany.</font>
 </div>
@@ -48,6 +82,19 @@
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Wyloguj" style="height:30px; width:200px"/>
 </form>
-
+<div th:if="${projs!=null}">
+    <table style="float: left">
+        <tr>
+            <th>NUMER</th>
+            <th>NAZWA</th>
+        </tr>
+        <th:block th:each="proj : ${projs}">
+            <tr>
+                <td th:text="${proj.getId()}">Onions</td>
+                <td th:text="${proj.getName()}">2.41</td>
+            </tr>
+        </th:block>
+    </table>
+</div>
 </body>
 </html>

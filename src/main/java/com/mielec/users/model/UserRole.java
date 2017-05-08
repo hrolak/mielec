@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-@Entity
+@Entity(name ="user_roles")
 @Table(name = "user_roles",
         uniqueConstraints = @UniqueConstraint(
                 columnNames = { "role", "username" }))

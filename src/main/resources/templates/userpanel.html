@@ -14,23 +14,53 @@
             margin-left:12%;
             margin-right:12%;
         }
-        td.one, th.one th.two td.two {
+        td.one, th.one th.two  {
             border: 1px solid #000000;
             text-align: center;
             padding: 1px;
             width: auto;
+            background-color: #ffffff;
         }
-        select {
+
+        td.two {
+            border: 1px solid #000000;
+            text-align: center;
+            padding: 1px;
+            width: auto;
+            background-color: #e6e6e6;
+        }
+
+        select.one {
             width:100%!important;
             height:100%!important;
             border: 0px;
             font-size: large;
+            background-color: #ffffff;
         }
+
+        select.two {
+            width:100%!important;
+            height:100%!important;
+            border: 0px;
+            font-size: large;
+            background-color: #e6e6e6;
+        }
+
         tr.two {
             border: 1px solid #000000;
             background-color: #e6e6e6;
+            text-align: center;
         }
         tr.one {
+            border: 1px solid #000000;
+            background-color: #ffffff;
+        }
+        th.two {
+            border: 1px solid #000000;
+            background-color: #e6e6e6;
+            text-align: center;
+        }
+        th.one {
             border: 1px solid #000000;
             background-color: #ffffff;
         }
@@ -65,34 +95,35 @@
     <table class="one">
         <tr class="one">
             <th class="one">TEMAT</th>
-            <th th:colspan="${deps.size()}" class="one">PON</th>
+            <th th:colspan="${deps.size()}" th:class="${clas}">PON</th>
             <th th:colspan="${deps.size()}" class="one">WT</th>
-            <th th:colspan="${deps.size()}" class="one">ŚRO</th>
+            <th th:colspan="${deps.size()}" class="two">ŚRO</th>
             <th th:colspan="${deps.size()}" class="one">CZW</th>
-            <th th:colspan="${deps.size()}" class="one">PT</th>
-            <th th:colspan="${deps.size()}" class="one">SOB</th>
-            <th th:colspan="${deps.size()}" class="one">NIE</th>
-            <th class="one">SUM</th>
+            <th th:colspan="${deps.size()}" class="two">PT</th>
+            <th class="one">SUMA</th>
         </tr>
-        <tr class="one">
+        <tr th:if="${deps.size()!=1}"   class="one">
             <th></th>
             <th th:each="i : ${depL}" th:text="${i}"></th>
             <th></th>
         </tr>
         <tr class="one" th:each="row : ${table}">
-            <td class="one" th:text="${row.key.getName()}">Onions</td>
-            <form th:action="@{/addjob}" th:each="cell : ${row.value}" method="post" th:id="${cell.getDate() + cell.getDep() + row.key}">
+            <td class="one" th:text="${row.key.getId() + ' - ' + row.key.getName()}">Onions</td>
+            <form th:action="@{/addjob}" th:each="cell,ii : ${row.value}" method="post" th:id="${cell.getDate() + cell.getDep() + row.key}">
                 <input type="hidden" name="date" th:value="${#calendars.format(cell.getDate(),'yyyy-MM-dd')}" />
                 <input type="hidden" name="d_id" th:value="${cell.getDep()}" />
                 <input type="hidden" name="project" th:value="${row.key.getId()}" />
-            <td class="one"><select name="time" th:form="${cell.getDate() + cell.getDep() + row.key}" onchange="this.form.submit()">
+            <td th:if="${(ii.index/deps.size())%2==0}" class="two"><select class="two" name="time" th:form="${cell.getDate() + cell.getDep() + row.key}" onchange="this.form.submit()">
                 <option th:each="i : ${in}" th:value="${i}" th:text="${i}" th:selected="(${cell.getTime()} == ${i})" ></option>
             </select></td>
+                <td th:if="${(ii.index/deps.size())%2!=0}" class="one"><select class="one" name="time" th:form="${cell.getDate() + cell.getDep() + row.key}" onchange="this.form.submit()">
+                    <option th:each="i : ${in}" th:value="${i}" th:text="${i}" th:selected="(${cell.getTime()} == ${i})" ></option>
+                </select></td>
             </form>
             <td class="total" ><p th:text="${projsum.get(row.key.getId())}"></p></td>
         </tr>
         <tr class="two">
-            <td class="two">SUM</td>
+            <td class="two">SUMA</td>
             <td class="two" th:colspan="${deps.size()}" th:each="val : ${datesum}"><p th:text="${val}"></p></td>
             <td></td>
         </tr>
@@ -140,6 +171,9 @@
     <input type="hidden" name="date" th:value="${date}"/>
     <input type="submit" name="prevweek" id="dat_id" value="Następny tydzień" style="height:30px; width:200px"/>
 </form >
+<form th:action="@{/}" method="get">
+    <input type="submit" value="Menu" style="height:30px; width:200px"/>
+</form>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Wyloguj" style="height:30px; width:200px"/>
 </form>

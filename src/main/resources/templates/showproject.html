@@ -18,6 +18,11 @@
         tr:nth-child(even) {
             background-color: #dddddd;
         }
+        input {
+            width: 200px;
+            height: 30px;
+            font-size: larger;
+        }
     </style>
 </head>
 <body>
@@ -28,22 +33,25 @@
     <input type="submit" value="Wyloguj"/>
 </form>
 
-<div th:if="${total!=null}">
-    <table style="float: left">
-        <tr>
-            <th>WSZYSTKIE GODZINY</th>
-            <th>KOSZT</th>
-        </tr>
-        <th:block>
+
+
+    <table style="float: left; border-collapse:collapse" >
+
             <tr>
-                <td th:text="${total}">Onions</td>
-                <td th:text="${totalp}">Onions</td>
+                <th></th>
+                <th>SUMA GODZIN</th>
+                <th>KOSZT</th>
             </tr>
-        </th:block>
-    </table>
-</div>
-<div th:if="${deps!=null}">
-    <table style="float: left">
+            <th:block>
+                <tr style="border-bottom: 3pt solid black">
+                    <th>WSZYSTKIE GODZINY</th>
+                    <td th:text="${total}">Onions</td>
+                    <td th:text="${totalp}">Onions</td>
+                </tr>
+            </th:block>
+
+
+        <div th:if="${deps!=null and deps.size()>0}">
         <tr>
             <th>DZIAł</th>
             <th>SUMA GODZIN</th>
@@ -56,11 +64,10 @@
             <td th:text="${dep.value.value}">2.41</td>
         </tr>
         </th:block>
-    </table>
-</div>
-<div th:if="${deps2!=null}" th:remove="tag">
-    <table style="float: right">
-        <tr>
+        </div>
+
+<div th:if="${deps2!=null  and deps2.size()>0}" th:remove="tag">
+        <tr style="border-top: 3pt solid black">
             <th>PRACOWNIK</th>
             <th>SUMA GODZIN</th>
             <th>KOSZT</th>
@@ -72,7 +79,7 @@
                 <td th:text="${dep2.value.value}">2.41</td>
             </tr>
         </th:block>
-    </table>
 </div>
+    </table>
 </body>
 </html>

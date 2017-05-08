@@ -52,8 +52,10 @@ public class UserController {
         Date today=new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(today);
-        cal.add(Calendar.DAY_OF_YEAR, -6);
+        cal.add(Calendar.DAY_OF_YEAR, -7);
         Date historyDate = cal.getTime();
+        cal.add(Calendar.DAY_OF_YEAR, 8);
+        today=cal.getTime();
         return date.after(historyDate) && date.before(today);
     }
     public static boolean isDateInCurrentMonth(Date date) {
@@ -82,6 +84,7 @@ public class UserController {
     @Autowired
     UserDepsDaoImpl UDDI;
 
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public @ResponseBody ModelAndView index(@RequestParam("id") String id) {
@@ -90,8 +93,8 @@ public class UserController {
         User u=UDI.findByUserName(id);
         List<Job> jobs=JDI.findJobByUser(id);
         List<Department> adeps=DDI.getDepartments();
-        int curr=0;
-        int last=0;
+        double curr=0;
+        double last=0;
         if(jobs!=null) {
             for(int i=0;i<jobs.size();i++) {
                 if(isDateInCurrentMonth(jobs.get(i).getDate()))
@@ -103,9 +106,25 @@ public class UserController {
         model.addObject("user",u);
         model.addObject("curr",curr);
         model.addObject("last",last);
-        List<UserDeps> deps=UDI.getDeps(id);
+        List<UserDeps> d=UDI.getDeps(id);
+        List<Department> deps=new ArrayList<Department>();
+        for(int i=0;i<d.size();i++) {
+            for(int j=0;j<adeps.size();j++) {
+                if(d.get(i).getDep().equals(adeps.get(j).getId()))
+                    deps.add(adeps.get(j));
+            }
+        }
         model.addObject("deps",deps);
         model.addObject("adeps",adeps);
+        return model;
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/eraseuser", method = RequestMethod.POST)
+    public @ResponseBody ModelAndView eraseuser(@RequestParam("id") String id) {
+        ModelAndView model=new ModelAndView("/");
+        URDI.eraseRoles(id);
+        UDI.eraseUser(id);
         return model;
     }
 
@@ -128,19 +147,24 @@ public class UserController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();
         boolean validDate=isDateInCurrentWeek(dat);
         boolean validProject = PDI.findProjectById(p)!=null;
         boolean validTime = t>=0;
-        if(validDate && validProject && validTime) {
+        if((validDate || t==0) && validProject && validTime) {
             Job j=JDI.findSpecificJob(name,dat,d_id,p);
             if(j!=null)
                 JDI.eraseJob(j.getId());
             JDI.addJob(name,p,t,dat,d_id);
+            validDate = true;
         }
+
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        c.setTime(dat);
+        while(c.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY)
+            c.add(Calendar.DAY_OF_YEAR,-1);
         dat=c.getTime();
         ModelAndView model=userpanel(format.format(dat));
         model.addObject("vDate",validDate);
@@ -180,7 +204,7 @@ public class UserController {
         }
         Calendar c = Calendar.getInstance();
         c.setTime(dat);
-        c.add(Calendar.DATE, 6);
+        c.add(Calendar.DATE, 4);
         Date dat2 = c.getTime();
 
         User user=UDI.findByUserName(name);
@@ -194,17 +218,17 @@ public class UserController {
         List<Job> j= JDI.findJobByUserAndDateBetween(name,dat,dat2);
         if(j!=null) {
             List<String> depL = new ArrayList<String>();
-            for(int i=0;i<7*deps.size();i++)
+            for(int i=0;i<5*deps.size();i++)
                 depL.add(deps.get(i%deps.size()).getDep());
             model.addObject("depL",depL);
             Map<Integer,Project> idName = new HashMap<Integer,Project>();
             for(int i=0;i<proj.size();i++) {
                 idName.put(proj.get(i).getId(),proj.get(i));
             }
-            Map<Project,ArrayList<Job> > table = new HashMap<Project,ArrayList<Job> >();
+            Map<Project,ArrayList<Job> > table = new TreeMap<Project,ArrayList<Job> >();
             Map<Integer,Double> projsum = new HashMap<Integer,Double>();
             List<Double> datesum = new ArrayList<Double>();
-            for(int in=0;in<7;in++)
+            for(int in=0;in<5;in++)
                 datesum.add(0.0);
             Project p;
             String id;
@@ -219,9 +243,9 @@ public class UserController {
                         if(proj.get(ii).getId()==p.getId())
                             proj.remove(ii);
 
-                    ArrayList<Job> a=new ArrayList<Job>(deps.size()*7);
+                    ArrayList<Job> a=new ArrayList<Job>(deps.size()*5);
                     table.put(p,a);
-                    for(int ii=0;ii<deps.size()*7;ii++) {
+                    for(int ii=0;ii<deps.size()*5;ii++) {
                         dep=deps.get(ii%deps.size()).getDep();
                         table.get(p).add(new Job(name,0,0,c.getTime(),dep));
                         if((ii+1)%deps.size()==0)
@@ -246,10 +270,12 @@ public class UserController {
         ArrayList<Double> in=new ArrayList<Double>();
         for(int i=0;i<=48;i++)
             in.add(i/2.0);
+
         model.addObject("in",in);
         model.addObject("deps",deps);
         model.addObject("proj",proj);
         model.addObject("date",d);
+        model.addObject("clas","two");
         return model;
     }
 
@@ -260,7 +286,11 @@ public class UserController {
         String name = auth.getName();
         ModelAndView model=new ModelAndView("userpanel");
         List<Job> j= JDI.findJobByUser(name);
+        List<Project> p = PDI.getProjects();
+
         model.addObject("jobs",j);
+
+
         return model;
     }
 
@@ -268,7 +298,19 @@ public class UserController {
     @RequestMapping(value="/showadminrecords", method = RequestMethod.POST)
     public @ResponseBody ModelAndView showadminrecords(@RequestParam("user") String user_id) {
         ModelAndView model=index(user_id);
-        List<Job> j= JDI.findJobByUser(user_id);
+        List<Job> j= JDI.findJobByUserDateSorted(user_id);
+        for (Iterator<Job> iter = j.listIterator(); iter.hasNext(); ) {
+            Job a = iter.next();
+            if (a.getTime()==0) {
+                iter.remove();
+            }
+        }
+        List<Project> p = PDI.getProjects();
+        Map<Integer,String> pp = new HashMap<Integer,String>();
+
+        for(int i=0;i<p.size();i++)
+            pp.put(p.get(i).getId(),p.get(i).getName());
+        model.addObject("projs",pp);
         model.addObject("jobs",j);
         return model;
     }
@@ -320,7 +362,18 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/addbranch", method = RequestMethod.POST)
     public @ResponseBody ModelAndView addbranch(@RequestParam("branch") String branch,@RequestParam("user") String user_id) {
-        UDDI.addUserDeps(UDI.findByUserName(user_id),branch);
+        User u=UDI.findByUserName(user_id);
+        if(UDDI.isAdded(user_id,branch)==false)
+            UDDI.addUserDeps(u,branch);
+        ModelAndView model=index(user_id);
+        return model;
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/erasebranch", method = RequestMethod.POST)
+    public @ResponseBody ModelAndView erasebranch(@RequestParam("branch") String branch,@RequestParam("user") String user_id) {
+        if(UDDI.isAdded(user_id,branch)==true)
+            UDDI.eraseDep(user_id,branch);
         ModelAndView model=index(user_id);
         return model;
     }
@@ -368,14 +421,23 @@ public class UserController {
     @RequestMapping(value="/adddepartment_added", method = RequestMethod.POST)
     public @ResponseBody ModelAndView adddepartment_added(@RequestParam("d_id") String d_id,@RequestParam("name") String name) {
 
-        ModelAndView model=new ModelAndView("adddepartment");
         Department d=new Department(d_id,name);
         boolean added=DDI.isDepartment(d_id);
         if(!added)
             DDI.addDepartment(d);
-        model.addObject("added",added);
-        List<Department> x=DDI.getDepartments();
-        model.addObject("deps",x);
+        else
+            DDI.renameDepartment(d_id,name);
+        ModelAndView model=adddepartment();
+        return model;
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/erasedepartment", method = RequestMethod.POST)
+    public @ResponseBody ModelAndView erasedepartment(@RequestParam("d_id") String d_id) {
+        boolean added=DDI.isDepartment(d_id);
+        if(added)
+            DDI.eraseDepartment(d_id);
+        ModelAndView model=adddepartment();
         return model;
     }
 
@@ -388,6 +450,9 @@ public class UserController {
         model.addObject("deps",x);
         return model;
     }
+
+
+
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value="/", method = RequestMethod.GET)
     public @ResponseBody ModelAndView hello() {
